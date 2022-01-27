@@ -1,0 +1,150 @@
+<template>
+  <list class="tasks-list">
+    <list-item type="list-item" class="list-item" for="{{taskItem in currentTasksArr}}">
+      <slide-view
+        id="{{'slide-view-'+taskItem.id}}"
+        class="slide-view"
+        buttons="{{slideButtonsArr}}"
+        layer="same"
+        isopen="false"
+        edge="right"
+        enableslide="true"
+        onbuttonclick="onButtonClick(taskItem)"
+      >
+        <text class="{{taskItem.class}}">
+          {{ taskItem.value }}
+        </text>
+      </slide-view>
+    </list-item>
+  </list>
+</template>
+
+<script>
+import { mapState, mapGetters, Component } from 'qa-vuex'
+import { TASK_STATES, SLIDE_BUTTONS } from '../helper/const'
+import { showToast, showPrompt, deepClone } from '../helper/utils'
+
+export default Component({
+  data() {
+    return {
+      slideButtonsArr: [
+        {
+          id: SLIDE_BUTTONS.firstBtnId,
+          buttonWidth: '200px',
+          text: SLIDE_BUTTONS.firstBtnText,
+          backgroundColor: SLIDE_BUTTONS.firstBtnColor,
+        },
+        {
+          id: SLIDE_BUTTONS.secondBtnId,
+          buttonWidth: '200px',
+          text: SLIDE_BUTTONS.secondBtnText,
+          backgroundColor: SLIDE_BUTTONS.secondBtnColor,
+        },
+      ],
+    }
+  },
+
+  computed: {
+    ...mapState(['tasksArr', 'currentTasksArr']),
+  },
+
+  watch: {
+    tasksArr(newTasksArr, oldTasksArr) {
+      if (oldTasksArr.length == 0 && newTasksArr.length == 1) {
+        this.addAnimForFirstTask()
+      }
+    },
+  },
+
+  onInit() {},
+
+  onButtonClick(taskItem, data) {
+    const { id } = data
+    if (id == SLIDE_BUTTONS.firstBtnId) {
+      this.completeCurrentTask(taskItem)
+    } else {
+      this.deleteCurrentTask(taskItem)
+    }
+    this.closeSlideViewById(taskItem.id)
+  },
+
+  completeCurrentTask(taskItem) {
+    if (taskItem.incomplete == true) {
+      this.$store.commit('updateTasksArr', this.genCompletedTasksArr(taskItem))
+      showToast('恭喜你,你已经完成了这个任务')
+    }
+  },
+
+  genCompletedTasksArr(taskItem) {
+    const tempArr = this.tasksArr.filter((task) => task.id !== taskItem.id)
+    tempArr.push({
+      id: taskItem.id,
+      value: taskItem.value,
+      incomplete: false,
+      class: 'complete-task-item',
+    })
+    return tempArr
+  },
+
+  deleteCurrentTask(taskItem) {
+    showPrompt('确定删除这个任务吗').then((res) => {
+      if (res.data.index == 0) {
+        const leftArr = this.tasksArr.filter((task) => task.id !== taskItem.id)
+        this.$store.commit('updateTasksArr', leftArr)
+        showToast('你已经删除了这个任务了,去完成下一个任务吧')
+      }
+    })
+  },
+
+  openSlideViewById(id) {
+    this.$element('slide-view-' + id).open({ animation: true })
+  },
+
+  closeSlideViewById(id) {
+    this.$element('slide-view-' + id).close({ animation: true })
+  },
+
+  /**
+   * @desc: 为第一条任务，添加滑动动画，以告知用户期望的操作方式；
+   */
+  addAnimForFirstTask() {
+    const firstItemId = this.tasksArr[0].id
+    setTimeout(() => {
+      this.openSlideViewById(firstItemId)
+    }, 10)
+
+    setTimeout(() => {
+      this.closeSlideViewById(firstItemId)
+    }, 500)
+  },
+})
+</script>
+
+<style lang="less">
+@import './../assets/styles/style.less';
+
+.tasks-list {
+  height: 100%;
+  width: 100%;
+  margin: 0 4 * @size-factor;
+  .list-item {
+    width: 100%;
+    height: 20 * @size-factor;
+    margin: 2 * @size-factor auto;
+    .task-item,
+    .complete-task-item {
+      width: 100%;
+      height: 20 * @size-factor;
+      padding: 0 6 * @size-factor;
+      font-size: 6 * @size-factor;
+      color: @black;
+      border: 1px solid @grey;
+    }
+    .complete-task-item {
+      opacity: 0.618;
+      text-decoration: line-through;
+      background-color: @grey;
+    }
+  }
+}
+</style>

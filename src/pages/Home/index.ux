@@ -1,0 +1,67 @@
+<import name="add-new" src="./../../components/add-new.ux"></import>
+<import name="placeholder" src="./../../components/placeholder.ux"></import>
+<import name="tabbar" src="./../../components/tabbar.ux"></import>
+<import name="task-list" src="./../../components/task-list.ux"></import>
+
+<template>
+  <div class="wrapper">
+    <div class="header">
+      <add-new />
+    </div>
+    <div class="content" @click="onLoseInputFocus">
+      <task-list />
+      <placeholder if="{{!currentTasksArr.length}}" />
+    </div>
+    <div class="footer">
+      <tabbar />
+    </div>
+  </div>
+</template>
+
+<script>
+import { mapState, mapGetters, Component } from 'qa-vuex'
+import { TASK_STATES } from './../../helper/const.js'
+
+export default Component({
+  computed: {
+    ...mapState(['tasksArr', 'currentTasksArr']),
+  },
+
+  onInit() {
+    this.initTasksData()
+  },
+
+  initTasksData() {
+    $utils.getStorage(TASK_STATES.task_arr).then((res = []) => {
+      this.$store.commit('updateTasksArr', res)
+      this.$store.commit('updateCurrentTaskState', TASK_STATES.all)
+    })
+  },
+
+  onLoseInputFocus() {
+    this.$broadcast('loseInputFocus')
+  },
+})
+</script>
+
+<style lang="less">
+@import './../../assets/styles/style.less';
+.wrapper {
+  flex-direction: column;
+  .header {
+    position: fixed;
+    top: 0;
+    height: 24 * @size-factor;
+  }
+  .content {
+    margin: 25 * @size-factor 0;
+    width: 100%;
+    height: 100% - 48 * @size-factor;
+  }
+  .footer {
+    position: fixed;
+    bottom: 0;
+    height: 24 * @size-factor;
+  }
+}
+</style>

@@ -1,0 +1,31 @@
+<template>
+  <div class="wrapper">
+    <div class="placeholder-content">
+      <img
+        src="./../assets/images/placeholder-img.png"
+        alt="无任务占位图"
+        class="placeholder-img"
+      />
+      <text class="reminder-text">当前无任务，快来写下你的计划吧</text>
+    </div>
+  </div>
+</template>
+
+<style lang="less">
+@import './../assets/styles/style.less';
+.wrapper {
+  position: fixed;
+  top: 80 * @size-factor;
+  left: 30 * @size-factor;
+  .placeholder-content {
+    .flex-box-mixins;
+    .placeholder-img {
+      margin-bottom: 4 * @size-factor;
+      width: 50 * @size-factor;
+    }
+    .reminder-text {
+      color: @grey;
+    }
+  }
+}
+</style>

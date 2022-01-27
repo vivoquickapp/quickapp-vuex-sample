@@ -1,0 +1,126 @@
+<template>
+  <div class="wrapper">
+    <input
+      type="text"
+      id="add-input"
+      class="add-input"
+      placeholder="添加新任务"
+      value="{{newTaskStr}}"
+      @change="updateValue"
+    />
+    <input type="button" class="add-btn" @click="onAddNewTask" value="添加" />
+  </div>
+</template>
+
+<script>
+import { mapState, Component } from 'qa-vuex'
+import { TASK_STATES } from '../helper/const'
+import { showToast, showPrompt, deepClone } from '../helper/utils'
+
+export default Component({
+  data: {
+    newTaskStr: '',
+  },
+
+  computed: {
+    ...mapState(['tasksArr']),
+  },
+
+  onInit() {
+    this.$on('loseInputFocus', this.handleLoseInputFocus)
+  },
+
+  handleLoseInputFocus() {
+    this.$element('add-input').focus({ focus: false })
+  },
+
+  onAddNewTask() {
+    if (this.newTaskStr) {
+      let isOwned = false
+      for (let task of this.tasksArr) {
+        if (task.value === this.newTaskStr) {
+          isOwned = true
+          break
+        }
+      }
+      if (isOwned) {
+        this.addRetitiveTask()
+      } else {
+        this.addUnownedTask()
+      }
+    } else {
+      showToast('任务不能为空,请输入任务然后再添加任务吧')
+    }
+  },
+
+  addRetitiveTask() {
+    showPrompt('任务已经在列表中了，还要继续添加相同任务吗').then((res) => {
+      if (res.data.index == 0) {
+        this.commitNewTasksArr(this.newTaskStr)
+        this.newTaskStr = ''
+        showToast('添加任务成功,记得完成呦')
+      }
+    })
+  },
+
+  addUnownedTask() {
+    this.commitNewTasksArr(this.newTaskStr)
+    showToast('添加任务成功,记得完成呦')
+    this.newTaskStr = ''
+  },
+
+  genNewTask(value) {
+    const itemId = Math.random().toString(36)
+    return {
+      id: itemId,
+      value: value,
+      incomplete: true,
+      class: 'task-item',
+    }
+  },
+
+  genUpdatedTasksArr(value) {
+    const tempArr = deepClone(this.tasksArr)
+    tempArr.unshift(this.genNewTask(value))
+    return tempArr
+  },
+
+  commitNewTasksArr(value) {
+    this.$store.commit('updateTasksArr', this.genUpdatedTasksArr(value))
+  },
+
+  updateValue(e) {
+    this.newTaskStr = e.value
+  },
+})
+</script>
+
+<style lang="less">
+@import './../assets/styles/style.less';
+.wrapper {
+  margin: 4 * @size-factor;
+  .add-input {
+    width: 90%;
+    height: 16 * @size-factor;
+    margin-right: 4 * @size-factor;
+    border: 1px solid @grey;
+    padding: 0 4 * @size-factor;
+    border-radius: 10 * @size-factor;
+    font-size: 5 * @size-factor;
+  }
+  .add-input:focus {
+    border: 1px solid @black;
+  }
+  .add-btn {
+    height: 16 * @size-factor;
+    width: 16 * @size-factor;
+    background-color: @blue;
+    color: @white;
+    border-radius: 10 * @size-factor;
+    font-size: 6 * @size-factor;
+  }
+  .add-btn:active {
+    background-color: @deep-blue;
+  }
+}
+</style>

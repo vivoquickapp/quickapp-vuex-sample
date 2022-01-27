@@ -1,0 +1,114 @@
+<template>
+  <div class="wrapper">
+    <div class="footer">
+      <div
+        for="item in tabbarArr"
+        class="footer-item"
+        @click="onTabClick(item.taskState)"
+        style="backgroundColor: {{state === item.taskState ? 'skyblue' : '#fff'}};"
+      >
+        <image src="{{item.imgSrc}}" alt="{{item.imgAlt}}" class="item-img" />
+        <text>{{ item.text }} </text>
+      </div>
+  </div>
+</template>
+
+<script>
+import { mapState, Component } from 'qa-vuex'
+import { TASK_STATES } from '../helper/const'
+
+const tabbarArr = [
+  {
+    imgSrc: 'https://zhanstatic.vivo.com.cn/wukong/img/bc2105d2-ec12-4388-8713-1b4deba3e541.png',
+    imgAlt: "全部任务",
+    text: "全部",
+    taskState: TASK_STATES.all,
+  },
+  {
+    imgSrc: 'https://zhanstatic.vivo.com.cn/wukong/img/017b67b7-e234-426c-8513-f6605ad418b6.png',
+    imgAlt: "已完成任务",
+    text: "已完成",
+    taskState: TASK_STATES.completed,
+  },
+  {
+    imgSrc: 'https://zhanstatic.vivo.com.cn/wukong/img/e42d7078-0243-4a0e-9a87-da745a16048a.png',
+    imgAlt: "未完成任务",
+    text: "未完成",
+    taskState: TASK_STATES.todo,
+  },
+  {
+    imgSrc: 'https://zhanstatic.vivo.com.cn/wukong/img/ea28fe9b-cc34-4440-ab3d-151c29704619.png',
+    imgAlt: "删除已完成",
+    text: "清除",
+    taskState: TASK_STATES.delete,
+  },
+]
+
+export default Component({
+  data() {
+    return {
+      // 冻结不变数组，使得只读，vuex 中便不再监听，以提升效率。
+      tabbarArr: Object.freeze(tabbarArr),
+      state: TASK_STATES.all
+    }
+  },
+  
+  computed: {
+    ...mapState([
+      "tasksArr",
+    ])
+  },
+
+  onInit() {},
+
+  onTabClick(tab) {
+    if (tab == TASK_STATES.delete) {
+      this.deleteCompletedTasks();
+    } else {
+      this.toggleCurrentTaskState(tab);
+    }
+  },
+
+  toggleCurrentTaskState(newState) {
+    this.state = newState
+    this.$store.commit('updateCurrentTaskState', newState)
+  },
+
+  deleteCompletedTasks() {
+    $utils.showPrompt('确定删除所有已完成任务吗').then((res) => {
+      if (res.data.index == 0) {
+        this.$store.commit('updateTasksArr', this.tasksArr.filter((task) => task.incomplete))
+        $utils.showToast('已经删除所有已完成任务')
+      }
+    })
+  }
+})
+</script>
+
+<style lang="less">
+@import './../assets/styles/style.less';
+
+.wrapper {
+  width: 100%;
+  height: 100%;
+  background-color: @white;
+  border-top: 1px solid @grey;
+  .footer {
+    width: 100%;
+    height: 100%;
+    justify-content: center;
+    .footer-item {
+      height: 100%;
+      width: 40 * @size-factor;
+      .flex-box-mixins;
+      .item-img {
+        width: 10 * @size-factor;
+        margin-bottom: @size-factor;
+      }
+      text {
+        font-size: 5 * @size-factor;
+      }
+    }
+  }
+}
+</style>
