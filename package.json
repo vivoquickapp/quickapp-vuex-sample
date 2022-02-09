@@ -15,7 +15,7 @@
     "prettier-watcher": "onchange '**/*.md' \"src/**/**/*.{ux,js,json,less,scss,css,pcss,md,vue}\" -- prettier --write {{changed}}"
   },
   "dependencies": {
-    "qa-vuex": "^1.0.2"
+    "qa-vuex": "^1.0.3"
   },
   "devDependencies": {
     "@babel/runtime": "^7.12.5",

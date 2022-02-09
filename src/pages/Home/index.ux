@@ -24,7 +24,9 @@ import { TASK_STATES } from './../../helper/const.js'
 
 export default Component({
   computed: {
-    ...mapState(['tasksArr', 'currentTasksArr']),
+    ...mapState(['tasksArr']),
+
+    ...mapGetters(['currentTasksArr']),
   },
 
   onInit() {
@@ -34,7 +36,6 @@ export default Component({
   initTasksData() {
     $utils.getStorage(TASK_STATES.task_arr).then((res = []) => {
       this.$store.commit('updateTasksArr', res)
-      this.$store.commit('updateCurrentTaskState', TASK_STATES.all)
     })
   },
 
