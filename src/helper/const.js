@@ -9,8 +9,8 @@ export const TASK_STATES = {
 export const SLIDE_BUTTONS = {
   firstBtnId: 'complete-btn',
   firstBtnText: '完成',
-  firstBtnColor: '#09ba07',
+  firstBtnColor: '#0099ff',
   secondBtnId: 'delete-btn',
   secondBtnText: '删除',
-  secondBtnColor: 'red',
+  secondBtnColor: '#e42c64',
 }

@@ -5,11 +5,14 @@
         for="item in tabbarArr"
         class="footer-item"
         @click="onTabClick(item.taskState)"
-        style="backgroundColor: {{state === item.taskState ? 'skyblue' : '#fff'}};"
+        style="backgroundColor: {{state === item.taskState ? '#0099ff' : '#fff'}};"
       >
         <image src="{{item.imgSrc}}" alt="{{item.imgAlt}}" class="item-img" />
-        <text>{{ item.text }} </text>
+        <text style="color: {{state === item.taskState ? 'white' : 'black'}};">
+          {{ item.text }}
+        </text>
       </div>
+    </div>
   </div>
 </template>
 
@@ -19,25 +22,25 @@ import { TASK_STATES } from '../helper/const'
 
 const tabbarArr = [
   {
-    imgSrc: 'https://zhanstatic.vivo.com.cn/wukong/img/bc2105d2-ec12-4388-8713-1b4deba3e541.png',
+    imgSrc: '/assets/images/all.png',
     imgAlt: "全部任务",
     text: "全部",
     taskState: TASK_STATES.all,
   },
   {
-    imgSrc: 'https://zhanstatic.vivo.com.cn/wukong/img/017b67b7-e234-426c-8513-f6605ad418b6.png',
+    imgSrc: '/assets/images/completed.png',
     imgAlt: "已完成任务",
     text: "已完成",
     taskState: TASK_STATES.completed,
   },
   {
-    imgSrc: 'https://zhanstatic.vivo.com.cn/wukong/img/e42d7078-0243-4a0e-9a87-da745a16048a.png',
+    imgSrc: '/assets/images/todo.png',
     imgAlt: "未完成任务",
     text: "未完成",
     taskState: TASK_STATES.todo,
   },
   {
-    imgSrc: 'https://zhanstatic.vivo.com.cn/wukong/img/ea28fe9b-cc34-4440-ab3d-151c29704619.png',
+    imgSrc: '/assets/images/remove.png',
     imgAlt: "删除已完成",
     text: "清除",
     taskState: TASK_STATES.delete,
@@ -52,14 +55,14 @@ export default Component({
       state: TASK_STATES.all
     }
   },
-  
+
   computed: {
     ...mapState([
       "tasksArr",
     ])
   },
 
-  onInit() {},
+  onInit() { },
 
   onTabClick(tab) {
     if (tab == TASK_STATES.delete) {

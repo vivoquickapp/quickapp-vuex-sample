@@ -8,7 +8,7 @@
       value="{{newTaskStr}}"
       @change="updateValue"
     />
-    <input type="button" class="add-btn" @click="onAddNewTask" value="添加" />
+    <img src="./../assets/images/add.png" alt="添加新任务" class="add-btn" @click="onAddNewTask" />
   </div>
 </template>
 
@@ -99,8 +99,9 @@ export default Component({
 @import './../assets/styles/style.less';
 .wrapper {
   margin: 4 * @size-factor;
+  .flex-box-mixins(row);
   .add-input {
-    width: 90%;
+    width: 88%;
     height: 16 * @size-factor;
     margin-right: 4 * @size-factor;
     border: 1px solid @grey;
@@ -109,18 +110,11 @@ export default Component({
     font-size: 5 * @size-factor;
   }
   .add-input:focus {
-    border: 1px solid @black;
+    border: 1px solid @brand;
   }
   .add-btn {
-    height: 16 * @size-factor;
-    width: 16 * @size-factor;
-    background-color: @blue;
-    color: @white;
-    border-radius: 10 * @size-factor;
-    font-size: 6 * @size-factor;
-  }
-  .add-btn:active {
-    background-color: @deep-blue;
+    height: 12 * @size-factor;
+    width: 12 * @size-factor;
   }
 }
 </style>

@@ -3,12 +3,10 @@
  * 应用级别的配置，供所有页面公用
  */
 const $utils = require('./helper/utils')
-const $apis = require('./helper/apis').default
 
 /* @desc: 注入方法至全局 global,以便页面调用 */
 const hook2global = global.__proto__ || global
 hook2global.$utils = $utils
-hook2global.$apis = $apis
 
 import store from './store/store.js'
 import Vuex from 'qa-vuex'
@@ -16,6 +14,6 @@ import Vuex from 'qa-vuex'
 Vuex.install(store)
 
 export default {
-  onCreate() {},
+  onCreate() { },
 }
 </script>
